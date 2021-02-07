@@ -1,22 +1,24 @@
 from flask import Flask
-from reddit_client import RedditClient
 from aggregator import Aggregator
+import asyncio
+import websockets
+from flask_cors import CORS
+from flask_socketio import SocketIO, send, emit
+from reddit_client import RedditClient
 
-PERIOD = 10800
+PERIOD = 5
 TOP = 50
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app)
 aggregator = Aggregator(PERIOD, TOP)
-client = RedditClient(aggregator)
-
-aggregator.start_aggregating()
+client = RedditClient(aggregator, socketio)
 client.start_streaming()
 
-
-@app.route('/')
-def hello_world():
-    return aggregator.get_output()
-
+@socketio.on('test')
+def handle_message(data):
+    emit("res", "from the server")
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    socketio.run(app)

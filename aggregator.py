@@ -15,15 +15,16 @@ class Aggregator:
 
     def aggregate_counts(self, seconds: int, top: int):
         while True:
-            cur_counter = self.counter.copy()
-            self.counter = collections.Counter()
-            for symbol in cur_counter:
-                self.velocity[symbol] = cur_counter[symbol] - self.prev_counter[symbol]
-                self.acceleration[symbol] = self.velocity[symbol] - self.prev_velocity[symbol]
-            self.prev_counter = cur_counter.copy()
-            self.prev_velocity = self.velocity.copy()
+            # cur_counter = self.counter.copy()
+            # self.counter = collections.Counter()
+            # for symbol in cur_counter + self.prev_counter :
+            #     self.velocity[symbol] = cur_counter[symbol] - self.prev_counter[symbol]
+            #     self.acceleration[symbol] = self.velocity[symbol] - self.prev_velocity[symbol]
 
-            self.generate_output(top)
+            # self.prev_counter = cur_counter.copy()
+            # self.prev_velocity = self.velocity.copy()
+
+            # self.generate_output(top)
             time.sleep(seconds)
 
     def generate_output(self, top):

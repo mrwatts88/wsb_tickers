@@ -1,9 +1,11 @@
 import json, praw, string
 import threading
-
+from flask_socketio import SocketIO, emit
 
 class RedditClient:
-    def __init__(self, aggregator):
+    def __init__(self, aggregator, socketio):
+        self.socketio = socketio
+
         with open('credentials.json') as f:
             credentials = json.load(f)
             self.reddit = praw.Reddit(client_id=credentials["client_id"],
@@ -32,6 +34,8 @@ class RedditClient:
                         word = word.translate(str.maketrans('', '', string.punctuation))
                         if word in self.symbols and word not in self.blacklist:
                             aggregator.counter[word] += 1
+                            self.socketio.emit(word, {'count': aggregator.counter[word]})
+
             except Exception as e:
                 print(e)
 
